@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Application API</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div class="container">
+      <div class="hero-top">
+        <div class="tag">v1.0.0</div>
+        <a href="https://github.com/culetter" class="github-link" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+
+      <h1 class="hero-title">Order<br /><em>Application</em> API</h1>
+      <p class="hero-sub">REST API do zarządzania zamówieniami, produktami i użytkownikami. Zbudowane na FastAPI z autoryzacją JWT i bazą danych MySQL.</p>
+
+      <div class="tech-stack">
+        <span class="pill">FastAPI</span>
+        <span class="pill">MySQL</span>
+        <span class="pill">SQLAlchemy</span>
+        <span class="pill">JWT OAuth2</span>
+        <span class="pill">Pydantic</span>
+        <span class="pill">pymysql</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-num">14</span>
+          <span class="stat-label">endpointów</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">5</span>
+          <span class="stat-label">routerów</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">5</span>
+          <span class="stat-label">modeli DB</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">RBAC</span>
+          <span class="stat-label">autoryzacja</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="notice">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Wszystkie endpointy (oprócz <code>/auth/</code>, <code>/auth/token</code> i <code>GET /products/{id}</code>) są chronione tokenem JWT.
+    </section>
+
+    <div class="endpoints-grid">
+
+      <div class="router-block">
+        <div class="router-header">
+          <span class="router-prefix">/auth</span>
+          <span class="router-name">Authentication</span>
+        </div>
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <span class="path">/auth/</span>
+          <span class="desc">rejestracja nowego użytkownika</span>
+        </div>
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <span class="path">/auth/token</span>
+          <span class="desc">uzyskaj token JWT (logowanie)</span>
+        </div>
+      </div>
+
+      <div class="router-block">
+        <div class="router-header">
+          <span class="router-prefix">/products</span>
+          <span class="router-name">Products</span>
+        </div>
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <span class="path">/products/</span>
+          <span class="desc">utwórz produkt</span>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <span class="path">/products/{id}</span>
+          <span class="desc">pobierz produkt po ID</span>
+        </div>
+        <div class="endpoint">
+          <span class="method put">PUT</span>
+          <span class="path">/products/update/{id}</span>
+          <span class="desc">zaktualizuj produkt</span>
+        </div>
+        <div class="endpoint">
+          <span class="method delete">DEL</span>
+          <span class="path">/products/delete/{id}</span>
+          <span class="desc">usuń produkt</span>
+        </div>
+      </div>
+
+      <div class="router-block">
+        <div class="router-header">
+          <span class="router-prefix">/users</span>
+          <span class="router-name">Users</span>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <span class="path">/users/{id}</span>
+          <span class="desc">profil użytkownika</span>
+        </div>
+        <div class="endpoint">
+          <span class="method put">PUT</span>
+          <span class="path">/users/update/{id}</span>
+          <span class="desc">zaktualizuj dane użytkownika</span>
+        </div>
+        <div class="endpoint">
+          <span class="method delete">DEL</span>
+          <span class="path">/users/delete/{id}</span>
+          <span class="desc">usuń konto</span>
+        </div>
+      </div>
+
+      <div class="router-block">
+        <div class="router-header">
+          <span class="router-prefix">/orders</span>
+          <span class="router-name">Orders</span>
+        </div>
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <span class="path">/orders/</span>
+          <span class="desc">utwórz zamówienie</span>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <span class="path">/orders/{id}</span>
+          <span class="desc">pobierz zamówienie</span>
+        </div>
+        <div class="endpoint">
+          <span class="method put">PUT</span>
+          <span class="path">/orders/update/{id}</span>
+          <span class="desc">zaktualizuj zamówienie</span>
+        </div>
+        <div class="endpoint">
+          <span class="method delete">DEL</span>
+          <span class="path">/orders/delete/{id}</span>
+          <span class="desc">usuń zamówienie</span>
+        </div>
+      </div>
+
+      <div class="router-block">
+        <div class="router-header">
+          <span class="router-prefix">/roles</span>
+          <span class="router-name">Roles</span>
+        </div>
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <span class="path">/roles/</span>
+          <span class="desc">utwórz rolę</span>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <span class="path">/roles/{id}</span>
+          <span class="desc">pobierz rolę</span>
+        </div>
+        <div class="endpoint">
+          <span class="method delete">DEL</span>
+          <span class="path">/roles/delete/{id}</span>
+          <span class="desc">usuń rolę</span>
+        </div>
+      </div>
+
+    </div>
+
+    <section class="models-section">
+      <h2 class="section-title">Modele danych</h2>
+      <div class="models-grid">
+        <div class="model-card">
+          <div class="model-name">User</div>
+          <div class="model-fields">
+            <span class="field"><span class="field-type">int</span> id</span>
+            <span class="field"><span class="field-type">str</span> username</span>
+            <span class="field"><span class="field-type">str</span> hashed_password</span>
+            <span class="field"><span class="field-type">int</span> role_id →Role</span>
+          </div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">Role</div>
+          <div class="model-fields">
+            <span class="field"><span class="field-type">int</span> id</span>
+            <span class="field"><span class="field-type">str</span> role</span>
+          </div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">Product</div>
+          <div class="model-fields">
+            <span class="field"><span class="field-type">int</span> id</span>
+            <span class="field"><span class="field-type">str</span> product_name</span>
+            <span class="field"><span class="field-type">float</span> price</span>
+          </div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">Order</div>
+          <div class="model-fields">
+            <span class="field"><span class="field-type">int</span> id</span>
+            <span class="field"><span class="field-type">int</span> user_id →User</span>
+            <span class="field"><span class="field-type">str</span> status</span>
+            <span class="field"><span class="field-type">list</span> items[]</span>
+          </div>
+        </div>
+        <div class="model-card">
+          <div class="model-name">OrderItem</div>
+          <div class="model-fields">
+            <span class="field"><span class="field-type">int</span> id</span>
+            <span class="field"><span class="field-type">int</span> order_id →Order</span>
+            <span class="field"><span class="field-type">int</span> product_id →Product</span>
+            <span class="field"><span class="field-type">int</span> quantity</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>Order Application API</span>
+      <a href="https://github.com/culetter" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </footer>
+
+</body>
+</html>
