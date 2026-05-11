@@ -8,7 +8,7 @@ def create_order(order, user, db):
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication Failed")
 
-    db_order = models.Order(user_id=user.get("id"))
+    db_order = models.Order(user_id=user.get("id"), status=order.status)
 
     db.add(db_order)
     db.flush()
@@ -23,14 +23,15 @@ def create_order(order, user, db):
 
     db_order.items = [models.OrderItem(product_id=item.product_id, quantity=item.quantity) for item in order.items]
 
+    total_price = sum(item.quantity * product_map[item.product_id].price for item in order.items)
+
     db.commit()
     db.refresh(db_order)
-
-    total_price = sum(item.quantity * product_map[item.product_id].price for item in order.items)
 
     return {
         "id": db_order.id,
         "user": db_order.user,
+        "status": db_order.status,
         "items": db_order.items,
         "total_price": total_price
     }
@@ -47,32 +48,14 @@ def read_order(order_id, user, db):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     
     total_price = sum(item.quantity * item.product.price for item in db_order.items)
+
     return {
         "id": db_order.id,
         "user": db_order.user,
+        "status": db_order.status,
         "items": db_order.items,
         "total_price": total_price
     }
-
-
-def update_order(order_id, order, user, db):
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication Failed")
-    
-    if user.get("role") == "client":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-
-    order_db = db.query(models.Order).options(joinedload(models.Order.user), joinedload(models.Order.items).joinedload(models.OrderItem.product)).filter(models.Order.id == order_id).first()
-    if order_db is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
-    
-    for field, value in order.model_dump().items():
-        setattr(order_db, field, value)
-    
-    db.commit()
-    db.refresh(order_db)
-
-    return order_db
 
 def delete_order(order_id, user, db):
     if user is None:
@@ -87,5 +70,5 @@ def delete_order(order_id, user, db):
     
     db.delete(db_order)
     db.commit()
-    
+
     return {"Message": "Order deleted!"}

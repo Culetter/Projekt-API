@@ -1,6 +1,7 @@
 from datetime import timedelta, datetime, timezone
 from typing import Annotated
 from fastapi import Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from starlette import status
 from models import User
 from passlib.context import CryptContext
@@ -15,14 +16,22 @@ bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 def create_user(create_user_request, db):
-    create_user_model = User(
-        username=create_user_request.username, 
-        hashed_password=bcrypt_context.hash(create_user_request.password),
-        role_id=create_user_request.role_id
-    )
+    
+    try:
+        create_user_model = User(
+            username=create_user_request.username, 
+            hashed_password=bcrypt_context.hash(create_user_request.password),
+            role_id=create_user_request.role_id
+        )
 
-    db.add(create_user_model)
-    db.commit()
+        db.add(create_user_model)
+        db.commit()
+
+        return create_user_model
+    except IntegrityError:
+        db.rollback()
+
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User alredy exists")
 
 def login_for_access_token(form_data, db):
     user = authenticate_user(form_data.username, form_data.password, db)

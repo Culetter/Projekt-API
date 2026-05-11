@@ -20,20 +20,25 @@ def update_user(user_id, user, user_dep, db):
     if user_dep is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication Failed")
 
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    if user_dep.get("role") != "admin" and user_dep.get("id") != db_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    
-    for field, value in user.model_dump().items():
-        setattr(db_user, field, value)
-    
-    db.commit()
-    db.refresh(db_user)
+    try:
+        db_user = db.query(models.User).filter(models.User.id == user_id).first()
+        if db_user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if user_dep.get("role") != "admin" and user_dep.get("id") != db_user.id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+        
+        for field, value in user.model_dump().items():
+            setattr(db_user, field, value)
+        
+        db.commit()
+        db.refresh(db_user)
 
-    return db_user
+        return db_user
+    except IntegrityError:
+        db.rollback()
+
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User with this username alredy exists")
 
 def delete_user(user_id, user, db):
     if user is None:
